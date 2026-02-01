@@ -67,6 +67,16 @@ mg1_res = solve_analytical(
 )
 print(mg1_res)
 
+print("\n=== Analytical M/G/c test ===")
+res = solve_analytical(
+    model="M/G/c",
+    lambda_=1.6,
+    mu=1.0,
+    c=2,
+    service_spec={"dist_type": "gamma", "params": {"shape": 2, "scale": 0.5}}
+)
+print(res)
+
 print("\n=== Analytical G/G/1 (uniform arrivals, normal service) ===")
 gg1_res = solve_analytical(
     model="G/G/1",

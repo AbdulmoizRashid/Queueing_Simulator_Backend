@@ -306,41 +306,51 @@ def solve_analytical(model: str, lambda_: float, mu: float, c: int,
                      arrival_spec: Optional[Dict] = None,
                      service_spec: Optional[Dict] = None) -> AnalyticalResult:
     """
-    Supported:
+    Supports ALL:
       - M/M/1
       - M/M/c
       - M/G/1
+      - M/G/c
       - G/G/1
       - G/G/c
-    arrival_spec/service_spec are dicts like:
-      {"dist_type": "gamma", "params": {"shape":2, "scale":1}}
+
+    G distributions can be: normal, uniform, gamma
     """
 
-    model = model.strip().upper()
+    # Normalize model string
+    m = model.strip().upper().replace(" ", "")
 
-    # default for "M": exponential interarrival/service with rates lambda, mu
+    # Default distributions (for M)
     if arrival_spec is None:
         arrival_spec = {"dist_type": "exponential", "params": {"rate": lambda_}}
     if service_spec is None:
         service_spec = {"dist_type": "exponential", "params": {"rate": mu}}
 
+    # Compute mean & variance
     meanA, varA = mean_variance_from_spec(arrival_spec)
     meanS, varS = mean_variance_from_spec(service_spec)
 
-    if model in ["M/M/1", "MM1"]:
+    # ---- Exact models ----
+    if m in ["M/M/1", "MM1"]:
         return mm1(lambda_, mu)
 
-    if model in ["M/M/C", "M/M/C".upper(), "MM/C".upper(), "MMC"]:
+    if m in ["M/M/C", "MMC", "MM/C"]:
         return mmc(lambda_, mu, c)
 
-    if model in ["M/G/1", "MG1"]:
-        # arrival is exponential, service is general (varS from spec)
+    # ---- Mixed / General models ----
+    if m in ["M/G/1", "MG1"]:
+        # M arrivals (exponential), G service
         return mg1(lambda_, mu, varS)
 
-    if model in ["G/G/1", "GG1"]:
+    if m in ["M/G/C", "MGC", "MG/C"]:
+        # M arrivals ⇒ exponential ⇒ Var(A) = 1 / lambda^2
+        varA_m = 1.0 / (lambda_ * lambda_)
+        return ggc(lambda_, mu, c, varA_m, varS)
+
+    if m in ["G/G/1", "GG1"]:
         return gg1(lambda_, mu, varA, varS)
 
-    if model in ["G/G/C", "G/G/C".upper(), "GGC"]:
+    if m in ["G/G/C", "GGC", "GG/C"]:
         return ggc(lambda_, mu, c, varA, varS)
 
     raise NotImplementedError(f"Model not implemented yet: {model}")
