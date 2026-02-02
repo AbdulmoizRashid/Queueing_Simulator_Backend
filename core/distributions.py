@@ -24,7 +24,7 @@ def sample_from_spec(spec: Dict, rng: random.Random) -> Tuple[float, float, str]
     cp is the raw U(0,1) used for traceability (good for your CP column).
     """
     u = rng.random()
-    dist_type = spec["dist_type"]
+    dist_type = spec["dist_type"].strip().lower()
     p = spec["params"]
 
     if dist_type == "exponential":
@@ -48,7 +48,7 @@ def sample_from_spec(spec: Dict, rng: random.Random) -> Tuple[float, float, str]
     return value, u, lookup
 
 def mean_variance_from_spec(spec: Dict) -> Tuple[float, float]:
-    dist_type = spec["dist_type"]
+    dist_type = spec["dist_type"].strip().lower()
     p = spec["params"]
 
     if dist_type == "exponential":

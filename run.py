@@ -58,30 +58,35 @@ print("\n=== Analytical M/G/1 (service gamma) ===")
 mg1_res = solve_analytical(
     model="M/G/1",
     lambda_=0.6,
-    mu=1.0,
+    mu=None,
     c=1,
     service_spec={
         "dist_type": "gamma",
         "params": {"shape": 2.0, "scale": 0.5}
     }
 )
+
 print(mg1_res)
 
 print("\n=== Analytical M/G/c test ===")
 res = solve_analytical(
     model="M/G/c",
     lambda_=1.6,
-    mu=1.0,
+    mu=None,
     c=2,
-    service_spec={"dist_type": "gamma", "params": {"shape": 2, "scale": 0.5}}
+    service_spec={
+        "dist_type": "gamma",
+        "params": {"shape": 2.0, "scale": 0.5}
+    }
 )
+
 print(res)
 
 print("\n=== Analytical G/G/1 (uniform arrivals, normal service) ===")
 gg1_res = solve_analytical(
     model="G/G/1",
-    lambda_=0.6,
-    mu=1.0,
+    lambda_=None,
+    mu=None,
     c=1,
     arrival_spec={
         "dist_type": "uniform",
@@ -92,13 +97,14 @@ gg1_res = solve_analytical(
         "params": {"mean": 1.0, "std": 0.2}
     }
 )
+
 print(gg1_res)
 
 print("\n=== Analytical G/G/c (gamma arrivals, gamma service, c=2) ===")
 ggc_res = solve_analytical(
     model="G/G/c",
-    lambda_=0.8,
-    mu=1.0,
+    lambda_=None,
+    mu=None,
     c=2,
     arrival_spec={
         "dist_type": "gamma",
@@ -109,4 +115,5 @@ ggc_res = solve_analytical(
         "params": {"shape": 2.0, "scale": 0.5}
     }
 )
+
 print(ggc_res)
